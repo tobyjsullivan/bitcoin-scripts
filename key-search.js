@@ -1,5 +1,6 @@
 var bitcoin = require('bitcoinjs-lib');
 var clc = require('cli-color');
+var BigInteger = require('bigi');
 
 process.stdin.setEncoding('utf8');
 
@@ -7,9 +8,12 @@ function searchForKey(targetAddress) {
 	var found = "";
 	var bestKey = undefined;
 
+	var curPri = BigInteger.ONE;
+
 	var i = 0;
 	while (true) {
-		var keyPair = bitcoin.ECPair.makeRandom();
+		var keyPair = new bitcoin.ECPair(curPri);
+		curPri = curPri.add(BigInteger.ONE);
 		var curAddress = keyPair.getAddress();
 
 		var score;

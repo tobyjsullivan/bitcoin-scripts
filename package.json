@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bigi": "^1.4.1",
     "bitcoinjs-lib": "2.2.0",
     "cli-color": "^1.1.0"
   }

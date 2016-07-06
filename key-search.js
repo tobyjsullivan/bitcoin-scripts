@@ -4,16 +4,29 @@ var BigInteger = require('bigi');
 
 process.stdin.setEncoding('utf8');
 
+var cont = true;
+
+const arr = new Uint8Array(32);
+var buff = Buffer.from(arr.buffer);
+function randKey() {
+	for (var i = 0; i < 32; i++) {
+		arr[i] = Math.floor(Math.random() * 4294967296);
+	}
+	
+	return new bitcoin.ECPair(BigInteger.fromHex(buff.toString('hex')));
+}
+
+function printPair(keyPair) {
+			console.log(keyPair.getAddress(), '|', keyPair.toWIF());
+}
+
 function searchForKey(targetAddress) {
 	var found = "";
 	var bestKey = undefined;
 
-	var curPri = BigInteger.ONE;
-
 	var i = 0;
-	while (true) {
-		var keyPair = new bitcoin.ECPair(curPri);
-		curPri = curPri.add(BigInteger.ONE);
+	while (cont) {
+		var keyPair = randKey();
 		var curAddress = keyPair.getAddress();
 
 		var score;
@@ -21,6 +34,7 @@ function searchForKey(targetAddress) {
 
 		if (score > found.length) {
 			bestKey = keyPair;
+			printPair(bestKey);
 			found = curAddress.substring(0, score);
 		}
 
@@ -31,7 +45,7 @@ function searchForKey(targetAddress) {
 			process.exit(0);
 		}
 
-		if (i++ % 30 != 0) {
+		if (i++ % 8 != 0) {
 			continue;
 		}
 
@@ -42,6 +56,7 @@ function searchForKey(targetAddress) {
 }
 
 var address = "";
+
 
 process.stdin.on('readable', () => {
 	var chunk = process.stdin.read();
